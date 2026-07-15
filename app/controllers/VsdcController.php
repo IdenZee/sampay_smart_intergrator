@@ -13,7 +13,7 @@ class VsdcController extends Controller
 
     public function dashboard(string $id): void
     {
-        Auth::requireRole(['admin', 'manager']);
+        Auth::requireAdmin();
         $business = $this->bizModel->findWithVsdc((int)$id);
         if (!$business) $this->abort(404);
 
@@ -136,7 +136,7 @@ class VsdcController extends Controller
 
     public function registerItem(string $itemId): void
     {
-        Auth::requireRole(['admin', 'manager']);
+        Auth::requireAdmin();
         $db   = Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM items WHERE id = ?");
         $stmt->execute([(int)$itemId]);

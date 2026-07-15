@@ -55,13 +55,15 @@
                         <tr><td class="text-muted">MRC No</td><td><?= Format::e($business['mrc_no'] ?? '—') ?></td></tr>
                         <tr><td class="text-muted">Tax Office</td><td><?= Format::e($business['tax_office_name'] ?? '—') ?></td></tr>
                     </table>
+                    <?php if (Auth::isSamPayAdmin()): ?>
                     <a href="<?= APP_URL ?>/vsdc/dashboard/<?= $business['id'] ?>" class="btn btn-sm btn-outline-warning mt-2">
                         <i class="bi bi-lightning-charge-fill me-1"></i>
                         <?= $business['initialized'] ? 'Manage VSDC' : 'Set Up VSDC' ?>
                     </a>
+                    <?php endif; ?>
                 <?php else: ?>
                     <p class="text-muted mb-2 small">No VSDC configured for this business.</p>
-                    <?php if (Auth::isAdmin()): ?>
+                    <?php if (Auth::isSamPayAdmin()): ?>
                     <a href="<?= APP_URL ?>/businesses/edit/<?= $business['id'] ?>" class="btn btn-outline-warning btn-sm">
                         <i class="bi bi-plug me-1"></i> Configure VSDC
                     </a>
@@ -123,7 +125,7 @@
         <div class="content-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-phone-fill me-2"></i>Android POS API Keys</span>
-                <?php if (Auth::isAny(['admin','manager'])): ?>
+                <?php if (Auth::isSamPayAdmin()): ?>
                 <a href="<?= APP_URL ?>/api-keys/create?business_id=<?= $business['id'] ?>" class="btn btn-sm btn-outline-primary">
                     <i class="bi bi-plus-lg"></i> New Key
                 </a>

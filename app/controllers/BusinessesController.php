@@ -86,11 +86,14 @@ class BusinessesController extends Controller
                     AuditLog::record(Auth::id(), 'CREATE', 'businesses', $id,
                         'Business registered: ' . $fields['name'] . ' — admin account created for ' . $adminEmail);
 
-                    Flash::success(
-                        'Business "' . $fields['name'] . '" registered. ' .
-                        'Admin login: <strong>' . htmlspecialchars($adminEmail) . '</strong> ' .
-                        '/ <strong>' . htmlspecialchars($tempPw) . '</strong> ' .
-                        '(user must change password on first login)'
+                    Flash::successHtml(
+                        '<i class="bi bi-check-circle-fill me-2"></i>' .
+                        'Business <strong>' . htmlspecialchars($fields['name']) . '</strong> registered.' .
+                        '<hr class="my-2">' .
+                        '<i class="bi bi-key-fill me-1 text-warning"></i> Business admin credentials <em>(shown once)</em>:<br>' .
+                        '<span class="font-monospace">Email:</span> <strong>' . htmlspecialchars($adminEmail) . '</strong><br>' .
+                        '<span class="font-monospace">Password:</span> <strong class="text-danger">' . htmlspecialchars($tempPw) . '</strong><br>' .
+                        '<small class="text-muted">The user must change this password on first login.</small>'
                     );
                     $this->redirect('businesses');
                 }
@@ -166,10 +169,19 @@ class BusinessesController extends Controller
         $business = $this->model->findWithVsdc((int)$id);
         if (!$business) $this->abort(404);
 
-        $db         = Database::getInstance();
-        $items      = $db->query("SELECT * FROM items WHERE business_id = ? AND is_active = 1 ORDER BY item_name LIMIT 10", [(int)$id])->fetchAll();
-        $salesCount = $db->query("SELECT COUNT(*) FROM sales WHERE business_id = ?", [(int)$id])->fetchColumn();
-        $apiKeys    = $db->query("SELECT * FROM api_keys WHERE business_id = ? ORDER BY created_at DESC", [(int)$id])->fetchAll();
+        $db = Database::getInstance();
+
+        $stmt = $db->prepare("SELECT * FROM items WHERE business_id = ? AND is_active = 1 ORDER BY item_name LIMIT 10");
+        $stmt->execute([(int)$id]);
+        $items = $stmt->fetchAll();
+
+        $stmt = $db->prepare("SELECT COUNT(*) FROM sales WHERE business_id = ?");
+        $stmt->execute([(int)$id]);
+        $salesCount = $stmt->fetchColumn();
+
+        $stmt = $db->prepare("SELECT * FROM api_keys WHERE business_id = ? ORDER BY created_at DESC");
+        $stmt->execute([(int)$id]);
+        $apiKeys = $stmt->fetchAll();
 
         $this->view('businesses.show', [
             'pageTitle'  => $business['name'],

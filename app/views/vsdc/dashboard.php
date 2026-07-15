@@ -58,7 +58,7 @@ $done  = array_sum([$step1, $step2, $step3, $step4]);
                 <div class="small text-muted">
                     <i class="bi bi-clock me-1"></i>Initialised <?= Format::datetime($business['initialized_at']) ?>
                 </div>
-                <?php if (Auth::isAdmin()): ?>
+                <?php if (Auth::isSamPayAdmin()): ?>
                 <a href="<?= APP_URL ?>/vsdc/init/<?= $business['id'] ?>"
                    class="btn btn-sm btn-outline-secondary mt-2"
                    onclick="return confirm('Re-initialise? Only do this if VSDC device details changed.')">
@@ -66,7 +66,7 @@ $done  = array_sum([$step1, $step2, $step3, $step4]);
                 </a>
                 <?php endif; ?>
             <?php elseif ($business['vsdc_url']): ?>
-                <?php if (Auth::isAdmin()): ?>
+                <?php if (Auth::isSamPayAdmin()): ?>
                 <a href="<?= APP_URL ?>/vsdc/init/<?= $business['id'] ?>"
                    class="btn btn-warning"
                    onclick="return confirm('Initialise this device with ZRA VSDC?')">
@@ -106,7 +106,7 @@ $done  = array_sum([$step1, $step2, $step3, $step4]);
                     <i class="bi bi-clock me-1"></i>Last fetched <?= Format::datetime($business['last_std_codes']) ?>
                 </div>
             <?php endif; ?>
-            <?php if ($step1 && Auth::isAdmin()): ?>
+            <?php if ($step1 && Auth::isSamPayAdmin()): ?>
             <a href="<?= APP_URL ?>/vsdc/codes/<?= $business['id'] ?>"
                class="btn btn-sm <?= $step2 ? 'btn-outline-secondary' : 'btn-primary' ?> mt-2">
                 <i class="bi bi-arrow-repeat me-1"></i>
@@ -134,7 +134,7 @@ $done  = array_sum([$step1, $step2, $step3, $step4]);
                 Downloads ZRA commodity classification codes (HS codes). These are required
                 when registering items and will appear as a searchable dropdown on the item form.
             </p>
-            <?php if ($step1 && Auth::isAdmin()): ?>
+            <?php if ($step1 && Auth::isSamPayAdmin()): ?>
             <a href="<?= APP_URL ?>/vsdc/item-classes/<?= $business['id'] ?>"
                class="btn btn-sm <?= $step3 ? 'btn-outline-secondary' : 'btn-primary' ?> me-2">
                 <i class="bi bi-arrow-repeat me-1"></i>
@@ -169,7 +169,7 @@ $done  = array_sum([$step1, $step2, $step3, $step4]);
                 on a fiscalised receipt. New items or price changes require re-registration.
             </p>
 
-            <?php if ($unregistered > 0 && Auth::isAdmin()): ?>
+            <?php if ($unregistered > 0 && Auth::isSamPayAdmin()): ?>
             <a href="<?= APP_URL ?>/vsdc/register-all/<?= $business['id'] ?>"
                class="btn btn-warning me-2"
                onclick="return confirm('Register all <?= $unregistered ?> pending item(s) with ZRA VSDC?')">
@@ -197,7 +197,7 @@ $done  = array_sum([$step1, $step2, $step3, $step4]);
                         <td class="small font-monospace"><?= Format::e($item['item_cls_code']) ?></td>
                         <td class="small"><?= Format::currency($item['selling_price']) ?></td>
                         <td>
-                            <?php if (Auth::isAny(['admin','manager'])): ?>
+                            <?php if (Auth::isSamPayAdmin()): ?>
                             <a href="<?= APP_URL ?>/vsdc/register-item/<?= $item['id'] ?>"
                                class="btn btn-xs btn-outline-warning btn-sm">
                                 <i class="bi bi-lightning-charge"></i>

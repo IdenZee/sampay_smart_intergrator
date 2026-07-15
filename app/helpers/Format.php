@@ -48,14 +48,13 @@ class Format
 
     public static function roleBadge(string $role): string
     {
-        $map = [
-            'admin'     => 'bg-danger',
-            'director'  => 'bg-primary',
-            'manager'   => 'bg-warning text-dark',
-            'attendant' => 'bg-info text-dark',
+        $labels = [
+            'admin'          => ['bg-danger',              'SamPay Admin'],
+            'business_admin' => ['bg-primary',             'Business Admin'],
+            'business_user'  => ['bg-secondary',           'Business User'],
         ];
-        $class = $map[$role] ?? 'bg-secondary';
-        return '<span class="badge ' . $class . '">' . ucfirst($role) . '</span>';
+        [$class, $label] = $labels[$role] ?? ['bg-secondary', ucfirst($role)];
+        return '<span class="badge ' . $class . '">' . $label . '</span>';
     }
 
     public static function e(string $value): string

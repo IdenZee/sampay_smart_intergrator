@@ -12,6 +12,12 @@ class Flash
     public static function warning(string $message): void { self::set('warning', $message); }
     public static function info(string $message): void    { self::set('info',    $message); }
 
+    /** Like success() but message is rendered as raw trusted HTML (server-generated only). */
+    public static function successHtml(string $html): void
+    {
+        $_SESSION['flash'] = ['type' => 'success', 'message' => $html, 'raw' => true];
+    }
+
     public static function get(): ?array
     {
         if (isset($_SESSION['flash'])) {
@@ -42,7 +48,7 @@ class Flash
             'info'    => 'alert-info',
         ];
         $class = $map[$flash['type']] ?? 'alert-info';
-        $msg   = htmlspecialchars($flash['message']);
+        $msg   = !empty($flash['raw']) ? $flash['message'] : htmlspecialchars($flash['message']);
 
         return <<<HTML
         <div class="alert {$class} alert-dismissible fade show" role="alert">

@@ -1,6 +1,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div></div>
-    <?php if (Auth::isAny(['admin','manager'])): ?>
+    <div>
+        <?php if (Auth::isBusinessAdmin()): ?>
+        <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>Showing users for your business only.</span>
+        <?php endif; ?>
+    </div>
+    <?php if (Auth::isAny(['admin', 'business_admin'])): ?>
     <a href="<?= APP_URL ?>/users/create" class="btn btn-sm btn-primary">
         <i class="bi bi-person-plus-fill me-1"></i> New User
     </a>
@@ -9,13 +13,15 @@
 
 <div class="content-card">
     <div class="card-header">
-        <i class="bi bi-people-fill me-2"></i>All Users (<?= count($users) ?>)
+        <i class="bi bi-people-fill me-2"></i>
+        <?= Auth::isBusiness() ? 'Business Users' : 'All Users' ?> (<?= count($users) ?>)
     </div>
     <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead>
                 <tr>
                     <th>Name</th><th>Email</th><th>Role</th>
+                    <?php if (Auth::isSamPayAdmin()): ?><th>Business</th><?php endif; ?>
                     <th>Last Login</th><th>Status</th>
                     <th class="text-end">Actions</th>
                 </tr>
@@ -34,12 +40,15 @@
                     </td>
                     <td><?= Format::e($u['email']) ?></td>
                     <td><?= Format::roleBadge($u['role_name']) ?></td>
+                    <?php if (Auth::isSamPayAdmin()): ?>
+                    <td class="small text-muted"><?= Format::e($u['business_name'] ?? '— SamPay —') ?></td>
+                    <?php endif; ?>
                     <td class="text-muted small">
                         <?= $u['last_login'] ? Format::timeAgo($u['last_login']) : 'Never' ?>
                     </td>
                     <td><?= Format::statusBadge($u['is_active']) ?></td>
                     <td class="text-end">
-                        <?php if (Auth::isAny(['admin','manager'])): ?>
+                        <?php if (Auth::isAny(['admin', 'business_admin'])): ?>
                         <a href="<?= APP_URL ?>/users/edit/<?= $u['id'] ?>"
                            class="btn btn-sm btn-outline-secondary" title="Edit">
                             <i class="bi bi-pencil"></i>
@@ -49,7 +58,7 @@
                             <i class="bi bi-key"></i>
                         </a>
                         <?php endif; ?>
-                        <?php if (Auth::isAdmin() && $u['id'] !== Auth::id()): ?>
+                        <?php if (Auth::isAny(['admin', 'business_admin']) && $u['id'] !== Auth::id()): ?>
                         <form method="POST" action="<?= APP_URL ?>/users/delete/<?= $u['id'] ?>"
                               class="d-inline" onsubmit="return confirm('Deactivate this user?')">
                             <button class="btn btn-sm btn-outline-danger" title="Deactivate">
@@ -61,7 +70,7 @@
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($users)): ?>
-                <tr><td colspan="6" class="text-center text-muted py-4">No users yet.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">No users yet.</td></tr>
             <?php endif; ?>
             </tbody>
         </table>

@@ -13,7 +13,7 @@ class ApiKeysController extends Controller
 
     public function index(): void
     {
-        Auth::requireRole(['admin', 'manager']);
+        Auth::requireAdmin();
         $businessId = (int)$this->get('business_id', 0) ?: null;
         $businesses = $this->bizModel->query("SELECT * FROM businesses WHERE is_active = 1 ORDER BY name");
 
@@ -38,7 +38,7 @@ class ApiKeysController extends Controller
 
     public function create(): void
     {
-        Auth::requireRole(['admin', 'manager']);
+        Auth::requireAdmin();
         $businesses = $this->bizModel->query("SELECT * FROM businesses WHERE is_active = 1 ORDER BY name");
         $newKey     = null;
         $errors     = [];
@@ -72,7 +72,7 @@ class ApiKeysController extends Controller
 
     public function revoke(string $id): void
     {
-        Auth::requireRole(['admin', 'manager']);
+        Auth::requireAdmin();
         $key = $this->model->findById((int)$id);
         if (!$key) $this->abort(404);
 
